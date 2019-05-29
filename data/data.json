@@ -1,0 +1,86 @@
+{
+    "parameters": {
+        "rndnumbersPerSeed": 100000,
+        "seeds": 47,
+
+        "arrivals": {
+            "F1": 0,
+            "F3": 0
+        },
+
+        "queues": {
+            "F1": {
+                "servers": 2,
+                "capacity": 20,
+                "minArrival": 2.0,
+                "maxArrival": 3.5,
+                "minService": 4.0,
+                "maxService": 4.5
+            },
+
+            "F2": {
+                "servers": 1,
+                "capacity": 1,
+                "minService": 3.0,
+                "maxService": 5.0
+            },
+
+            "F3": {
+                "servers": 1,
+                "capacity": 1,
+                "minArrival": 2.0,
+                "maxArrival": 3.5,
+                "minService": 3.0,
+                "maxService": 5.0
+            },
+
+            "F4": {
+                "servers": 1,
+                "capacity": 1,
+                "minService": 3.0,
+                "maxService": 5.0
+            },
+
+            "F5": {
+                "servers": 1,
+                "capacity": 1,
+                "minService": 3.0,
+                "maxService": 5.0
+            },
+
+            "F6": {
+                "servers": 1,
+                "capacity": 1,
+                "minService": 3.0,
+                "maxService": 5.0
+            }
+        },
+        
+        "network": {
+            "N1": {
+                "source": "F1",
+                "target": "F2",
+                "probability": 0.4
+            },
+
+            "N2": {
+                "source": "F2",
+                "target": "F3",
+                "probability": 0.8
+            },
+
+            "N3": {
+                "source": "F1",
+                "target": "F5",
+                "probability": 0.4
+            },
+
+            "N4": {
+                "source": "F3",
+                "target": "F4",
+                "probability": 0.8
+            }
+
+        }
+    }
+}
