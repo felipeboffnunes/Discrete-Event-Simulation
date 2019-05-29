@@ -1,5 +1,6 @@
 # Imports
 from .preprocess import preprocess
+from .logger import logger
 import simpy
 ###
 global queues
@@ -39,11 +40,9 @@ class Queue(object):
         self.duration_task = MY_RANDOM_NUMBERS.pop() * (self.maxS - self.minS) + self.minS
         # The simulation makes the self.duration_task change depending on env.now. So we call it only once and store it on aux to make things sturdy.
         aux_duration_task = self.duration_task
-        print("{0} STARTED BEING SERVED AT QUEUE {1} AT {2:.2f} - SERVICE DURATION: {3:.2f}".format(
-            aux_entity, self.name, env.now, aux_duration_task))
+        print(logger("Serving", aux_entity, self.name, env.now, aux_duration_task))
         yield self.env.timeout(aux_duration_task)
-        print("{0} SERVED AT QUEUE {1} AT {2:.2f} - SERVICE DURATION: {3:.2f}".format(
-            aux_entity, self.name, env.now, aux_duration_task))
+        print(logger("Served", aux_entity, self.name, env.now, aux_duration_task))
 
         if self.destiny:
             env.process(self.to_destiny(aux_entity))
@@ -70,8 +69,7 @@ class Queue(object):
 def redirect(env, name, task):
     global LOST
     if task.on_line == task.capacity:
-        print("{0} LOST WHILE REDIRECTING TO {1}. FULL QUEUE.".format(
-            name, task.name))
+        print(logger("LostRedirect", name, task.name))
         LOST += 1
     else:
         print("{0} REDIRECTED TO {1}".format(name, task.name))
@@ -83,20 +81,18 @@ def redirect(env, name, task):
 
 def entity(env, name, task):
     global LOST
-    print("{0} ARRIVES SYSTEM AT {1:.2f}".format(name, env.now))
+    print(logger("Arrive", name, env.now))
     with task.machine.request() as request:
         yield request
         # Dealing with capacity
         if task.on_line == task.capacity:
-            print("{0} LOST. {1} FULL.".format(name, task.name))
+            print(logger("Lost", name, task.name))
             LOST += 1
         else:
             task.on_line += 1
-            print("{0} ENTERS QUEUE {1} AT {2:.2f}".format(
-                name, task.name, env.now))
+            print(logger("Enter", name, task.name, env.now))
             yield env.process(task.do_task(name))
-            print("{0} LEFT QUEUE {1} AT {2:.2f}".format(
-                name, task.name, env.now))
+            print(logger("Left", name, task.name, env.now))
 
 
 def setup(env, data):
@@ -138,13 +134,13 @@ def setup(env, data):
                     if queue.on_line == queue.capacity:
                         counter += 1
                         LOST += 1
-                        print("ENTITY {0} LOST. {1} FULL.".format(
-                            counter, queue.name))
+                        print(logger("Lost", counter, queue.name))
                     else:
                         yield env.timeout(MY_RANDOM_NUMBERS.pop() * (queue.maxA - queue.minA) + queue.minA)
                         counter += 1
                         env.process(
                             entity(env, "ENTITY {}".format(counter), queue))
+
 
 def start():
     env.process(setup(env, data))
