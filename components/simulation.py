@@ -40,9 +40,9 @@ class Queue(object):
         self.duration_task = MY_RANDOM_NUMBERS.pop() * (self.maxS - self.minS) + self.minS
         # The simulation makes the self.duration_task change depending on env.now. So we call it only once and store it on aux to make things sturdy.
         aux_duration_task = self.duration_task
-        print(logger("Serving", aux_entity, self.name, env.now, aux_duration_task))
+        logger("Serving", aux_entity, self.name, env.now, aux_duration_task)
         yield self.env.timeout(aux_duration_task)
-        print(logger("Served", aux_entity, self.name, env.now, aux_duration_task))
+        logger("Served", aux_entity, self.name, env.now, aux_duration_task)
 
         if self.destiny:
             env.process(self.to_destiny(aux_entity))
@@ -69,10 +69,10 @@ class Queue(object):
 def redirect(env, name, task):
     global LOST
     if task.on_line == task.capacity:
-        print(logger("LostRedirect", name, task.name))
+        logger("LostRedirect", name, task.name)
         LOST += 1
     else:
-        print("{0} REDIRECTED TO {1}".format(name, task.name))
+        logger("Redirected", name, task.name)
         task.on_line += 1
         with task.machine.request() as request:
             yield request
@@ -81,18 +81,18 @@ def redirect(env, name, task):
 
 def entity(env, name, task):
     global LOST
-    print(logger("Arrive", name, env.now))
+    logger("Arrive", name, env.now)
     with task.machine.request() as request:
         yield request
         # Dealing with capacity
         if task.on_line == task.capacity:
-            print(logger("Lost", name, task.name))
+            logger("Lost", name, task.name)
             LOST += 1
         else:
             task.on_line += 1
-            print(logger("Enter", name, task.name, env.now))
+            logger("Enter", name, task.name, env.now)
             yield env.process(task.do_task(name))
-            print(logger("Left", name, task.name, env.now))
+            logger("Left", name, task.name, env.now)
 
 
 def setup(env, data):
@@ -134,7 +134,7 @@ def setup(env, data):
                     if queue.on_line == queue.capacity:
                         counter += 1
                         LOST += 1
-                        print(logger("Lost", counter, queue.name))
+                        logger("LostArrive", counter, queue.name)
                     else:
                         yield env.timeout(MY_RANDOM_NUMBERS.pop() * (queue.maxA - queue.minA) + queue.minA)
                         counter += 1
