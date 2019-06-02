@@ -8,9 +8,14 @@
  <p>The simulation must keep track of the current simulation time, in whatever measurement units are suitable for the system being modeled. In discrete-event simulations, as opposed to continuous simulations, time 'hops' because events are instantaneous – the clock skips to the next event start time as the simulation proceeds.</p>
  <h3>Events List</h3>
  <p>The simulation maintains at least one list of simulation events. This is sometimes called the pending event set because it lists events that are pending as a result of previously simulated event but have yet to be simulated themselves. An event is described by the time at which it occurs and a type, indicating the code that will be used to simulate that event. It is common for the event code to be parametrized, in which case, the event description also contains parameters to the event code. Typically, events are scheduled dynamically as the simulation proceeds.</p>
- 
+<h3>Random-number generators</h3>
+<p>The simulation needs to generate random variables of various kinds, depending on the system model. This is accomplished by one or more Pseudorandom number generators. The use of pseudo-random numbers as opposed to true random numbers is a benefit should a simulation need a rerun with exactly the same behavior.</p>
+<h3>Statistics</h3>
+<p>The simulation typically keeps track of the system's statistics, which quantify the aspects of interest. In the bank example, it is of interest to track the mean waiting times. In a simulation model, performance metrics are not analytically derived from probability distributions, but rather as averages over replications, that is different runs of the model. Confidence intervals are usually constructed to help assess the quality of the output.</p>
+<h3>Ending condition</h3>
+<p>Because events are bootstrapped, theoretically a discrete-event simulation could run forever. So the simulation designer must decide when the simulation will end. Typical choices are "at time t" or "after processing n number of events" or, more generally, "when statistical measure X reaches the value x".</p>
+
  # Theory of Constraints
- 
 <p>The theory of constraints (TOC) is a management paradigm that views any manageable system as being limited in achieving more of its goals by a very small number of constraints. There is always at least one constraint, and TOC uses a focusing process to identify the constraint and restructure the rest of the organization around it. TOC adopts the common idiom "a chain is no stronger than its weakest link". This means that processes, organizations, etc., are <strong>vulnerable because the weakest person or part can always damage or break them or at least adversely affect the outcome</strong>.</p>
 
 # Common Uses
